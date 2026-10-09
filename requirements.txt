@@ -1,0 +1,8 @@
+# EquiForge runtime dependencies.
+#
+# The toolkit runs with ONLY NumPy (pure-NumPy IRLS logistic-regression
+# fallback). scikit-learn is the Tier-0 backend when available; if it is
+# absent, the toolkit transparently falls back to the hand-written solver.
+numpy>=1.24
+scikit-learn>=1.5.0 # optional Tier-0 backend (pure-NumPy IRLS fallback if absent)
+scipy>=1.10.0 # optional; used by some downstream diagnostics

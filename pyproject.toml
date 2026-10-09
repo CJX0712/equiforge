@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "equiforge"
+version = "0.1.0"
+description = "World-class algorithmic-fairness toolkit: Reweighing (Kamiran & Calders 2012) + Equalized-Odds postprocessing (Hardt et al. 2016), deterministic and CPU-only."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "晨星 (Morning Star)" }]
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.24",
+    "scikit-learn>=1.0",
+    "scipy>=1.8",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[project.scripts]
+equiforge = "equiforge.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["equiforge*"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+
+[tool.ruff.lint]
+# Pragmatic, CI-friendly rule set. Pyflakes + pycodestyle errors, import
+# ordering, a few Bugbear/C4/upgrade/ruff/security checks. Deliberately avoids
+# noisy stylistic rules (pylint magic-number / arg-count, unicode-in-docstring).
+select = ["E", "F", "I", "W", "B", "C4", "UP", "RUF", "S"]
+ignore = ["RUF002", "B905", "E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/*" = ["S101", "PLC0415", "S603", "S404", "S105", "S106"]
+"examples/*" = ["E402"]
+"equiforge/cli.py" = ["E402"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["equiforge"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

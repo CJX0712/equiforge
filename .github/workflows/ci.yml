@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  quality-and-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.13"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest ruff
+
+      - name: Ruff lint
+        run: python -m ruff check equiforge/ examples/ tests/
+
+      - name: Ruff format check
+        run: python -m ruff format --check equiforge/ examples/ tests/
+
+      - name: Pytest
+        run: python -m pytest tests/
+
+      - name: Benchmark demo (gate + determinism smoke)
+        run: python examples/run_demo.py
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Scan for secrets / tokens
+        run: |
+          if grep -rEn "(AKIA|ghp_|github_pat_|sk-[A-Za-z0-9]{20,}|-----BEGIN .*PRIVATE KEY-----)" --include="*.py" --include="*.yml" --include="*.toml" --include="*.txt" --include="*.md" . ; then
+            echo "::error::Possible secret material detected in source tree."
+            exit 1
+          fi
+          echo "Secret scan OK."

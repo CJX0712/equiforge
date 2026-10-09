@@ -1,0 +1,7 @@
+# Pinned lockfile captured from the validated build environment.
+# Used by CI and Docker for reproducible installs.
+numpy==2.5.3
+scikit-learn==1.9.1
+scipy==1.18.1
+pytest==9.1.1
+ruff==0.16.10
